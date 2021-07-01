@@ -373,7 +373,7 @@
       \ifx\@Birthday\empty\else
         \SUBTRACT{\Width@Birthday}{\Offset@IDText}{\Width@Box}
         \SUBTRACT{\Height@Birthday}{\Height@YOMI}{\Height@Box}
-        \PutAt(\Offset@IDText,\Height@Birthday){\makebox(\Width@Box,\Height@Box)[c]{\@Birthday 生\@editbuf}}
+        \PutAt(\Offset@IDText,\Height@Birthday){\makebox(\Width@Box,\Height@Box)[l]{\@Birthday 生\@editbuf}}
       \fi
     }
     % ID情報(性別)
