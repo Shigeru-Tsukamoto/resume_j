@@ -1,0 +1,603 @@
+%---+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8----+----9----+----0
+%
+% Copyright (c) 2021 Shigeru Tsukamoto. All rights reserved.
+%
+% Author: Shigeru Tsukamoto
+% E-Mail: tsukamoto.shigeru@gmail.com
+%
+% resume_j.sty: 日本式の履歴書を成形して出力するLaTeXスタイルファイル。利用例は同包のresume_j.tex を
+%               参照してください。
+%
+%---+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8----+----9----+----0
+\usepackage{calculator,calculus,calc} % 数値計算スタイルファイル (https://konoyonohana.blog.fc2.com/blog-entry-185.html)
+\usepackage{fancyhdr}                 % ヘッダー・フッター設定スタイルファイル
+
+%----------------------------------------------------------------------------
+%
+% picture環境の設定
+%
+%----------------------------------------------------------------------------
+\setlength{\unitlength}{1 mm} % picture環境で使う単位
+\def\width@picture{210}       % picture環境で使う領域の幅(A4用紙幅と同じ)
+\def\height@picture{280}      % picture環境で使う領域の高さ(テキスト領域の高さと同じ)
+
+%----------------------------------------------------------------------------
+%
+% 履歴書の書式の設定
+%
+%----------------------------------------------------------------------------
+\def\OriginX{16} % 用紙左端から#1 mmの位置に原点X座標を設定
+\def\OriginY{24} % 用紙上端から#1 mmの位置に原点Y座標を設定
+%
+\def\Width@Photo{30}      % 写真の幅 30 mm
+\def\Height@Photo{40}     % 写真の高さ 40 mm
+\def\MarginLeft@Photo{10} % 写真領域の左側マージン
+%
+\def\Height@YOMI{5}       % ふりがな部分の高さ
+\def\Height@Name{15}      % 名前欄の高さ
+\def\Height@Birthday{12}  % 誕生日欄の高さ
+\def\Width@Birthday{72}   % 誕生日欄の幅
+\def\Width@Gender{12}     % 性別欄の幅
+\def\Height@Address{12}   % 住所欄の高さ
+\def\Height@Telephone{12} % 電話番号欄の高さ
+\def\Height@EMail{12}     % E-Mail欄の高さ
+\def\Offset@IDItem{2}
+\def\Offset@IDText{12}
+\def\Offset@Name{6}       % 名前情報領域のオフセット
+\def\Width@Field{178}     % ID情報以外の部分の幅
+%
+\def\Height@EduItem{6}   % 学歴見出し欄の高さ
+\def\Height@EduText{16}  % 学歴情報欄の高さ
+\def\Width@EduPeriod{50} % 在学期間欄の幅
+\def\Width@EduStatus{28} % 修学情報欄の幅
+\def\Offset@Edu{2}       % 学歴情報テキストのオフセット
+%
+\def\Height@QItem{6} % 資格・免許情報の見出し欄の高さ
+\def\Height@QText{8} % 資格・免許情報欄の高さ
+\def\Width@QDate{50} % 資格・免許の取得年月日欄の幅
+\def\Offset@Q{2}     % 資格・免許情報テキストのオフセット
+%
+\def\Height@WorkItem{6}   % 職歴情報の見出し欄の高さ
+\def\Height@WorkText{16}  % 職歴情報欄の高さ
+\def\Width@WorkPeriod{50} % 在職期間欄の幅
+\def\Offset@Work{2}       % 職歴情報テキストのオフセット
+%
+\def\Height@LeaveItem{6}   % 休職情報の見出し欄の高さ
+\def\Height@LeaveText{16}  % 休職情報欄の高さ
+\def\Width@LeavePeriod{50} % 休職期間欄の幅
+\def\Offset@Leave{2}       % 休職情報テキストのオフセット
+%
+% 履歴書の欄の幅
+\SUBTRACT{\width@picture}{\OriginX}{\Width@RIREKI} % Width@RIREKI = width@picture - OriginX
+\SUBTRACT{\Width@RIREKI}{\OriginX}{\Width@RIREKI}  %              - OriginX
+% 写真領域の幅
+\def\MarginRight@Photo{\MarginLeft@Photo}
+\ADD{\MarginLeft@Photo}{\MarginRight@Photo}{\Margin@Photo}
+\ADD{\Width@Photo}{\Margin@Photo}{\Width@PhotoPart}
+% ID領域の幅
+\SUBTRACT{\Width@RIREKI}{\Width@PhotoPart}{\Width@ID}
+% ID領域の高さ
+\ADD{\Height@YOMI}{\Height@Name}{\Height@ID}    % Height@ID = Height@YOMI + Height@Name
+\ADD{\Height@ID}{\Height@Birthday}{\Height@ID}  %           + Height@Birthday
+\ADD{\Height@ID}{\Height@Address}{\Height@ID}   %           + Height@Address
+\ADD{\Height@ID}{\Height@Telephone}{\Height@ID} %           + Height@Telephone
+\ADD{\Height@ID}{\Height@EMail}{\Height@ID}     %           + Height@EMail
+% 写真領域の高さ
+\def\Height@PhotoPart{\Height@ID}
+% 国籍欄の幅
+\SUBTRACT{\Width@ID}{\Width@Birthday}{\Width@Nationality}        % Width@Nationality = Width@ID - Width@Birthday
+\SUBTRACT{\Width@Nationality}{\Width@Gender}{\Width@Nationality} %                   - Width@Gender
+% 学校名欄の幅
+\SUBTRACT{\Width@RIREKI}{\Width@EduPeriod}{\Width@EduSchool}    % Width@EduSchool = Width@RIREKI - Width@EduPeriod
+\SUBTRACT{\Width@EduSchool}{\Width@EduStatus}{\Width@EduSchool} %                 - Width@EduStatus
+% 資格・免許内容欄の幅
+\SUBTRACT{\Width@RIREKI}{\Width@QDate}{\Width@QDesc}
+% 職歴内容欄の幅
+\SUBTRACT{\Width@RIREKI}{\Width@WorkPeriod}{\Width@WorkDesc}
+% 職歴内容欄の幅
+\SUBTRACT{\Width@RIREKI}{\Width@LeavePeriod}{\Width@LeaveDesc}
+
+%----------------------------------------------------------------------------
+%
+% 描画領域の設定
+%
+%----------------------------------------------------------------------------
+\setlength{\hoffset}{-1 in}                 % 余白をゼロにするための設定
+\setlength{\voffset}{-1 in}                 % 余白をゼロにするための設定
+\setlength{\topmargin}{0 mm}                % 余白をゼロにするための設定
+\setlength{\oddsidemargin}{0 mm}            % 余白をゼロにするための設定
+\setlength{\evensidemargin}{\oddsidemargin} % 余白をゼロにするための設定
+\setlength{\headheight}{0 mm}               % 余白をゼロにするための設定
+\setlength{\headsep}{0 mm}                  % 余白をゼロにするための設定
+\setlength{\footskip}{\baselineskip}        % テキスト領域下端とフッターまでの距離
+\setlength{\parindent}{0 mm}                % 段落の字下げ
+\setlength{\textwidth}{\width@picture mm}   % A4用紙幅
+\setlength{\textheight}{\height@picture mm} % テキスト領域の高さ
+
+%----------------------------------------------------------------------------
+%
+% フッターの書式設定
+%
+%----------------------------------------------------------------------------
+\pagestyle{fancy}
+\lfoot{\footnotesize\hspace{1cm}\@FamilyName\ \@GivenName} % 左下に名前
+\cfoot{- \thepage\ -}                       % 中央にページ数
+\rfoot{generated by \LaTeX\hspace{1cm}}     % 右下にクレジット
+\renewcommand{\headrulewidth}{0 mm}         % ヘッダーとテキスト領域との境界線の太さ
+\renewcommand{\footrulewidth}{0 mm}         % フッターとテキスト領域との境界線の太さ
+
+%----------------------------------------------------------------------------
+%
+% ID情報マクロ
+%
+%----------------------------------------------------------------------------
+\def\Date#1{\def\@Date{#1}}
+\def\FamilyName#1{\def\@FamilyName{#1}}
+\def\GivenName#1{\def\@GivenName{#1}}
+\def\FamilyNameYOMI#1{\def\@FamilyNameYOMI{#1}}
+\def\GivenNameYOMI#1{\def\@GivenNameYOMI{#1}}
+\def\Birthday#1{\def\@Birthday{#1}}
+\def\Age#1{\def\@Age{#1}}
+\def\Gender#1{\def\@Gender{#1}}
+\def\Nationality#1{\def\@Nationality{#1}}
+\def\ZipCode#1{\def\@ZipCode{#1}}
+\def\Address#1{\def\@Address{#1}}
+\def\Telephone#1{\def\@Telephone{#1}}
+\def\EMail#1{\def\@EMail{#1}}
+\def\Photo#1{\def\@Photo{#1}}
+
+%----------------------------------------------------------------------------
+%
+% 学歴情報マクロ
+%
+%----------------------------------------------------------------------------
+\newcounter{Length@Edu}% リスト長さのカウンター
+\def\list@Edu{}%         リストデータ
+\def\append@Edu#1{%      リストデータ#1に#2を追加
+  \ifx\list@Edu\empty%
+    \edef\list@Edu{#1}%
+  \else%
+    \edef\list@Edu{\list@Edu,#1}%
+  \fi
+  \stepcounter{Length@Edu}
+}
+\def\Education#1#2#3#4{% Educationコマンドを処理
+  \append@Edu{#1:#2:#3:#4:}
+}
+\def\split@Edu#1:#2:#3:#4:{% リストからデータを抽出
+  \def\Start@Edu{#1}%
+  \def\End@Edu{#2}%
+  \def\School@Edu{#3}%
+  \def\Status@Edu{#4}%
+}
+
+%----------------------------------------------------------------------------
+%
+% 資格・免許情報マクロ
+%
+%----------------------------------------------------------------------------
+\newcounter{Length@Q}% リスト長さのカウンター
+\def\list@Q{}% リストデータ
+\def\append@Q#1{% リストデータ#1に#2を追加
+  \ifx\list@Q\empty%
+  \edef\list@Q{#1}%
+  \else%
+  \edef\list@Q{\list@Q,#1}%
+  \fi
+  \stepcounter{Length@Q}
+}
+\def\Qualification#1#2{% Qualificationコマンドを処理
+  \append@Q{#1:#2:}
+}
+\def\split@Q#1:#2:{% リストからデータを抽出
+  \def\Date@Q{#1}%
+  \def\Desc@Q{#2}%
+}
+
+%----------------------------------------------------------------------------
+%
+% 職歴情報マクロ
+%
+%----------------------------------------------------------------------------
+\newcounter{Length@Work}% リスト長さのカウンター
+\def\list@Work{}% リストデータ
+\def\append@Work#1{% リストデータ#1に#2を追加
+  \ifx\list@Work\empty%
+    \edef\list@Work{#1}%
+  \else%
+    \edef\list@Work{\list@Work,#1}%
+  \fi
+  \stepcounter{Length@Work}
+}
+\def\Work#1#2#3#4{
+  \append@Work{#1:#2:#3:#4:}
+}
+\def\split@Work#1:#2:#3:#4:{
+  \def\Start@Work{#1}%
+  \def\End@Work{#2}%
+  \def\Company@Work{#3}%
+  \def\Post@Work{#4}%
+}
+
+%----------------------------------------------------------------------------
+%
+% 休職情報マクロ
+%
+%----------------------------------------------------------------------------
+\newcounter{Length@Leave}% リスト長さのカウンター
+\def\list@Leave{}% リストデータ
+\def\append@Leave#1{% リストデータ#1に#2を追加
+  \ifx\list@Leave\empty%
+  \edef\list@Leave{#1}%
+  \else%
+  \edef\list@Leave{\list@Leave,#1}%
+  \fi
+  \stepcounter{Length@Leave}
+}
+\def\Leave#1#2#3{
+  \append@Leave{#1:#2:#3:}
+}
+\def\split@Leave#1:#2:#3:{
+  \def\Start@Leave{#1}%
+  \def\End@Leave{#2}%
+  \def\Desc@Leave{#3}%
+}
+
+%----------------------------------------------------------------------------
+%
+% 描画基準位置設定コマンド
+%
+%----------------------------------------------------------------------------
+\def\MoveAt(#1,#2)#3{%   (OriginX,OriginY)から見た基準点(RootX,RootY)を設定
+  \ADD{\OriginX}{#1}{\RootX}% RootXを計算
+  \ADD{\OriginY}{#2}{\RootY}% RootYを計算
+  {#3}% コマンド実行
+}
+
+%----------------------------------------------------------------------------
+%
+% オブジェクト配置コマンド
+%
+%----------------------------------------------------------------------------
+\def\PutAt(#1,#2)#3{% (RootX,RootY)から見た位置(PosX,PosY)にオブジェクトを配置
+  \ADD{\RootX}{#1}{\PosX}%                  PosXを計算
+  \ADD{\RootY}{#2}{\PosY}%                  PosYを計算(1)
+  \SUBTRACT{\height@picture}{\PosY}{\PosY}% PosYを計算(2)
+  \put(\PosX,\PosY){#3}%                    (PosX,PosY)にオブジェクトを配置
+}
+
+%----------------------------------------------------------------------------
+%
+% フレーム(太枠)配置コマンド
+%
+%----------------------------------------------------------------------------
+\def\PutFrameAt(#1,#2)(#3,#4){% (RootX+#1,RootY+#2)に(#3,#4)の大きさの太枠を配置
+  \linethickness{0.5mm}
+  \SUBTRACT{#1}{0.25}{\x}
+  \ADD{#3}{0.5}{\w}
+  \ADD{#1}{#3}{\z}
+  \PutAt(\x,#2){\line(1, 0){\w}}% 上枠
+  \PutAt(\x,#4){\line(1, 0){\w}}% 下枠
+  \PutAt(#1,#2){\line(0,-1){#4}}% 左枠
+  \PutAt(\z,#2){\line(0,-1){#4}}% 右枠
+  \linethickness{0.1mm}
+}
+
+%----------------------------------------------------------------------------
+%
+% 履歴書ドキュメント書き出しコマンド
+%
+%----------------------------------------------------------------------------
+\def\writepages{
+  \begin{picture}(\width@picture,\height@picture)% 1ページ目
+    % タイトル
+    \MoveAt(0,0) {
+      \PutAt(0,-4){\makebox(\Width@RIREKI,5)[c]{\huge \bf 履\hspace{10mm}歴\hspace{10mm}書}}
+      \PutAt(0, 0){\makebox(\Width@RIREKI,3)[r]{\scriptsize \@Date 現在}}
+    }
+    % 写真
+    \MoveAt(0,0) {
+      %\PutFrameAt(0,0)(\Width@PhotoPart,\Height@PhotoPart)
+      \ADD{\Height@PhotoPart}{\Height@Photo}{\Y@Box}
+      \DIVIDE{\Y@Box}{2}{\Y@Box}
+      \PutAt(\MarginLeft@Photo,\Y@Box){\dashbox{.5}(\Width@Photo,\Height@Photo)[c]%
+        {\parbox{\Width@Photo mm}{\center\scriptsize 写真をはる位置\\\vspace{1mm}(縦\Height@Photo mm, 横\Width@Photo mm)}}
+      }
+      \ifx\@Photo\empty\else
+        \PutAt(\MarginLeft@Photo,\Y@Box){\includegraphics[height=\Height@Photo mm]{\@Photo}}
+      \fi
+    }
+    % ID情報(外枠と線)
+    \MoveAt(\Width@PhotoPart,0) {
+      \PutFrameAt(0,0)(\Width@ID,\Height@ID)
+      \PutAt(0,\Height@YOMI){\dashbox{0.5}(\Width@ID,\Height@YOMI){}}
+      \ADD{\Height@YOMI}{\Height@Name}{\Y@Box}
+      \DIVIDE{\Width@ID}{2}{\HalfWidth@ID}
+      \ADD{\Height@YOMI}{\Height@Name}{\Height@Box}
+      \PutAt(0,\Y@Box){\dashbox{0.5}(\HalfWidth@ID,\Height@Box){}} % vertical dashed line
+      \PutAt(0,\Y@Box){\line(1,0){\Width@ID}}
+      \ADD{\Y@Box}{\Height@Birthday}{\Y@Box}
+      \PutAt(0,\Y@Box){\line(1,0){\Width@ID}}
+      \PutAt(\Width@Birthday,\Y@Box){\line(0,1){\Height@Birthday}}
+      \ADD{\Width@Birthday}{\Width@Gender}{\X@Box}
+      \PutAt(\X@Box,\Y@Box){\line(0,1){\Height@Birthday}}
+      \ADD{\Y@Box}{\Height@Address}{\Y@Box}
+      \PutAt(0,\Y@Box){\line(1,0){\Width@ID}}
+      \ADD{\Y@Box}{\Height@Telephone}{\Y@Box}
+      \PutAt(0,\Y@Box){\line(1,0){\Width@ID}}
+      \ADD{\Y@Box}{\Height@EMail}{\Y@Box}
+      \PutAt(0,\Y@Box){\line(1,0){\Width@ID}}
+    }
+    % ID情報(名前の読み)
+    \DIVIDE{\Width@ID}{2}{\HalfWidth@ID}
+    \MoveAt(\Width@PhotoPart,0) {
+      \SUBTRACT{\HalfWidth@ID}{\Offset@IDItem}{\Width@Box}
+      \PutAt(\Offset@IDItem,\Height@YOMI){\makebox(\Width@Box,\Height@YOMI)[l]{\scriptsize ふりがな}}
+      \SUBTRACT{\HalfWidth@ID}{\Offset@Name}{\Width@Box}
+    	\PutAt(\Offset@Name,\Height@YOMI){\makebox(\Width@Box,\Height@YOMI)[c]{\scriptsize \@FamilyNameYOMI}}
+    }
+    \ADD{\Width@PhotoPart}{\HalfWidth@ID}{\X@Box}
+    \MoveAt(\X@Box,0) {
+      \DIVIDE{\Width@ID}{2}{\HalfWidth@ID}
+      \SUBTRACT{\HalfWidth@ID}{\Offset@IDItem}{\Width@Box}
+      \PutAt(\Offset@IDItem,\Height@YOMI){\makebox(\Width@Box,\Height@YOMI)[l]{\scriptsize ふりがな}}
+      \SUBTRACT{\HalfWidth@ID}{\Offset@Name}{\Width@Box}
+      \PutAt(\Offset@Name,\Height@YOMI){\makebox(\Width@Box,\Height@YOMI)[c]{\scriptsize \@GivenNameYOMI}}
+    }
+    % ID情報(名前)
+    \DIVIDE{\Width@ID}{2}{\HalfWidth@ID}
+    \def\Y@Box{\Height@YOMI}
+    \MoveAt(\Width@PhotoPart,\Y@Box) {
+      \SUBTRACT{\HalfWidth@ID}{\Offset@IDItem}{\Width@Box}
+      \PutAt(\Offset@IDItem,\Height@YOMI){\makebox(\Width@Box,\Height@YOMI)[l]{\scriptsize 姓}}
+      \SUBTRACT{\HalfWidth@ID}{\Offset@Name}{\Width@Box}
+      \PutAt(\Offset@Name,\Height@Name){\makebox(\Width@Box,\Height@Name)[c]{\LARGE \@FamilyName}}
+    }
+    \ADD{\Width@PhotoPart}{\HalfWidth@ID}{\X@Box}
+    \MoveAt(\X@Box,\Y@Box) {
+      \SUBTRACT{\HalfWidth@ID}{\Offset@IDItem}{\Width@Box}
+      \PutAt(\Offset@IDItem,\Height@YOMI){\makebox(\Width@Box,\Height@YOMI)[l]{\scriptsize 名}}
+      \SUBTRACT{\HalfWidth@ID}{\Offset@Name}{\Width@Box}
+      \PutAt(\Offset@Name,\Height@Name){\makebox(\Width@Box,\Height@Name)[c]{\LARGE \@GivenName}}
+    }
+    % ID情報(生年月日)
+    \ADD{\Y@Box}{\Height@Name}{\Y@Box}
+    \MoveAt(\Width@PhotoPart,\Y@Box){
+      \SUBTRACT{\Width@Birthday}{\Offset@IDItem}{\Width@Box}
+      \PutAt(\Offset@IDItem,\Height@YOMI){\makebox(\Width@Box,\Height@YOMI)[l]{\scriptsize 生年月日(年齢)}}
+	    \def\@editbuf{
+        \ifx\@Age\empty\else
+          { (満 \@Age 才)}
+        \fi
+      }
+      \ifx\@Birthday\empty\else
+        \SUBTRACT{\Width@Birthday}{\Offset@IDText}{\Width@Box}
+        \SUBTRACT{\Height@Birthday}{\Height@YOMI}{\Height@Box}
+        \PutAt(\Offset@IDText,\Height@Birthday){\makebox(\Width@Box,\Height@Box)[c]{\@Birthday 生\@editbuf}}
+      \fi
+    }
+    % ID情報(性別)
+    \ADD{\Width@PhotoPart}{\Width@Birthday}{\X@Box}
+    \MoveAt(\X@Box,\Y@Box){
+      \SUBTRACT{\Width@Gender}{\Offset@IDItem}{\Width@Box}
+      \PutAt(\Offset@IDItem,\Height@YOMI){\makebox(\Width@Box,\Height@YOMI)[l]{\scriptsize 性別}}
+      \SUBTRACT{\Height@Birthday}{\Height@YOMI}{\Height@Box}
+      \PutAt(0,\Height@Birthday){\makebox(\Width@Gender,\Height@Box)[c]{\@Gender}}
+    }
+    % ID情報(国籍)
+    \ADD{\X@Box}{\Width@Gender}{\X@Box}
+    \MoveAt(\X@Box,\Y@Box){
+      \SUBTRACT{\Width@Nationality}{\Offset@IDItem}{\Width@Box}
+      \PutAt(\Offset@IDItem,\Height@YOMI){\makebox(\Width@Box,\Height@YOMI)[l]{\scriptsize 国籍}}
+      \SUBTRACT{\Height@Birthday}{\Height@YOMI}{\Height@Box}
+      \PutAt(0,\Height@Birthday){\makebox(\Width@Nationality,\Height@Box)[c]{\@Nationality}}
+    }
+    % ID情報(住所)
+    \ADD{\Y@Box}{\Height@Birthday}{\Y@Box}
+    \MoveAt(\Width@PhotoPart,\Y@Box){
+      \SUBTRACT{\Width@ID}{\Offset@IDItem}{\Width@Box}
+      \PutAt(\Offset@IDItem,\Height@YOMI){\makebox(\Width@Box,\Height@YOMI)[l]{\scriptsize 現住所\quad〒\quad\@ZipCode}}
+      \SUBTRACT{\Width@ID}{\Offset@IDText}{\Width@Box}
+      \SUBTRACT{\Height@Address}{\Height@YOMI}{\Height@Box}
+      \PutAt(\Offset@IDText,\Height@Address){\makebox(\Width@Box,\Height@Box)[l]{\normalsize \@Address}}
+    }
+    % ID情報(電話番号)
+    \ADD{\Y@Box}{\Height@Address}{\Y@Box}
+    \MoveAt(\Width@PhotoPart,\Y@Box){
+      \SUBTRACT{\Width@ID}{\Offset@IDItem}{\Width@Box}
+      \PutAt(\Offset@IDItem,\Height@YOMI){\makebox(\Width@Box,\Height@YOMI)[l]{\scriptsize 電話番号}}
+      \SUBTRACT{\Width@ID}{\Offset@IDText}{\Width@Box}
+      \SUBTRACT{\Height@Telephone}{\Height@YOMI}{\Height@Box}
+      \PutAt(\Offset@IDText,\Height@Telephone){\makebox(\Width@Box,\Height@Box)[l]{\normalsize \@Telephone}}
+    }
+    % ID情報(電話番号)
+    \ADD{\Y@Box}{\Height@Telephone}{\Y@Box}
+    \MoveAt(\Width@PhotoPart,\Y@Box){
+      \SUBTRACT{\Width@ID}{\Offset@IDItem}{\Width@Box}
+      \PutAt(\Offset@IDItem,\Height@YOMI){\makebox(\Width@Box,\Height@YOMI)[l]{\scriptsize E-Mail}}
+      \SUBTRACT{\Width@ID}{\Offset@IDText}{\Width@Box}
+      \SUBTRACT{\Height@Telephone}{\Height@YOMI}{\Height@Box}
+      \PutAt(\Offset@IDText,\Height@EMail){\makebox(\Width@Box,\Height@Box)[l]{\normalsize \tt \@EMail}}
+    }
+    % 学歴情報(枠線)
+    \ADD{\Y@Box}{\Height@EMail}{\Y@Box}
+    \ADD{\Y@Box}{10}{\Y@Box}
+    \MULTIPLY{\value{Length@Edu}}{\Height@EduText}{\Height@Edu}
+    \ADD{\Height@Edu}{\Height@EduItem}{\Height@Edu}
+    \MoveAt(0,\Y@Box){
+      \PutAt(0,-1){\makebox(\Width@RIREKI,5)[c]{\large \bf 学\hspace{5mm}歴}}
+      \PutFrameAt(0,0)(\Width@RIREKI,\Height@Edu)
+      \PutAt(\Width@EduPeriod,0){\line(0,-1){\Height@Edu}}
+      \ADD{\Width@EduPeriod}{\Width@EduSchool}{\X@Box}
+      \PutAt(\X@Box,0){\line(0,-1){\Height@Edu}}
+      \PutAt(0,\Height@EduItem){\line(1,0){\Width@RIREKI}}
+    }
+    \ADD{\Y@Box}{\Height@EduItem}{\YShift}
+    \@for\linebuf:=\list@Edu\do{%
+      \ADD{\YShift}{\Height@EduText}{\YShift}
+      \MoveAt(0,\YShift){
+        \PutAt(0,0){\line(1,0){\Width@RIREKI}}
+      }
+    }
+    % 学歴情報(見出し)
+    \MoveAt(0,\Y@Box){
+      \PutAt(0,\Height@EduItem){\makebox(\Width@EduPeriod,\Height@EduItem)[c]{\scriptsize 在学期間}}
+      \PutAt(\Width@EduPeriod,\Height@EduItem){\makebox(\Width@EduSchool,\Height@EduItem)[c]{\scriptsize 学校名・学部名・学科名等}}
+      \ADD{\Width@EduPeriod}{\Width@EduSchool}{\X@Box}
+      \PutAt(\X@Box,\Height@EduItem){\makebox(\Width@EduStatus,\Height@EduItem)[c]{\scriptsize 卒業・修了・退学の別}}
+    }
+    % 学歴情報(内容)
+    \ADD{\Y@Box}{\Height@EduItem}{\YShift}
+    \@for\linebuf:=\list@Edu\do{%
+      \expandafter\split@Edu\linebuf
+      \MoveAt(0,\YShift){
+        % 在学期間
+        \SUBTRACT{\Width@EduPeriod}{\Offset@Edu}{\Width@EduPeriodText}
+        \SUBTRACT{\Width@EduPeriodText}{\Offset@Edu}{\Width@EduPeriodText}
+        \PutAt(0,\Height@EduText){\makebox(\Width@EduPeriod,\Height@EduText)[c]{\parbox[c]{\Width@EduPeriodText mm}{\Start@Edu\\\hfill$\sim$\End@Edu}}}
+        % 学校名、学部名、学科名等
+        \SUBTRACT{\Width@EduSchool}{\Offset@Edu}{\Width@EduSchoolText}
+        \SUBTRACT{\Width@EduSchoolText}{\Offset@Edu}{\Width@EduSchoolText}
+        \ADD{\Width@EduPeriod}{\Offset@Edu}{\X@Box}
+        \PutAt(\X@Box,\Height@EduText){\makebox(\Width@EduSchoolText,\Height@EduText)[l]{\parbox[c]{\Width@EduSchoolText mm}{\School@Edu}}}
+        % 卒業・修了・退学の別
+        \ADD{\Width@EduPeriod}{\Width@EduSchool}{\X@Box}
+        \PutAt(\X@Box,\Height@EduText){\makebox(\Width@EduStatus,\Height@EduText)[c]{\Status@Edu}}
+      }
+      \ADD{\YShift}{\Height@EduText}{\YShift}
+    }
+    % 資格・免許情報(枠線)
+    \ADD{\Y@Box}{\Height@Edu}{\Y@Box}
+    \ADD{\Y@Box}{10}{\Y@Box}
+    \MULTIPLY{\value{Length@Q}}{\Height@QText}{\Height@Q}
+    \ADD{\Height@Q}{\Height@QItem}{\Height@Q}
+    \MoveAt(0,\Y@Box){
+      \PutAt(0,-1){\makebox(\Width@RIREKI,5)[c]{\large \bf 資\hspace{5mm}格\hspace{5mm}・\hspace{5mm}免\hspace{5mm}許}}
+      \PutFrameAt(0,0)(\Width@RIREKI,\Height@Q)
+      \PutAt(\Width@QDate,0){\line(0,-1){\Height@Q}}
+      \PutAt(0,\Height@QItem){\line(1,0){\Width@RIREKI}}
+    }
+    \ADD{\Y@Box}{\Height@QItem}{\YShift}
+    \@for\linebuf:=\list@Q\do{%
+      \ADD{\YShift}{\Height@QText}{\YShift}
+      \MoveAt(0,\YShift){
+        \PutAt(0,0){\line(1,0){\Width@RIREKI}}
+      }
+    }
+    % 資格・免許情報(見出し)
+    \MoveAt(0,\Y@Box){
+      \PutAt(0,\Height@QItem){\makebox(\Width@QDate,\Height@QItem)[c]{\scriptsize 取得年月日}}
+      \PutAt(\Width@QDate,\Height@QItem){\makebox(\Width@QDesc,\Height@QItem)[c]{\scriptsize 資格・免許等の名称等}}
+    }
+    % 資格・免許情報(内容)
+    \ADD{\Y@Box}{\Height@QItem}{\YShift}
+    \@for\linebuf:=\list@Q\do{%
+      \expandafter\split@Q\linebuf
+      \MoveAt(0,\YShift){
+        % 取得年月日
+        \PutAt(0,\Height@QText){\makebox(\Width@QDate,\Height@QText)[c]{\Date@Q}}
+        % 資格・免許情報
+        \SUBTRACT{\Width@QDesc}{\Offset@Q}{\Width@QDescText}
+        \SUBTRACT{\Width@QDescText}{\Offset@Edu}{\Width@QDescText}
+        \ADD{\Width@QDate}{\Offset@Edu}{\X@Box}
+        \PutAt(\X@Box,\Height@QText){\makebox(\Width@QDescText,\Height@QText)[l]{\Desc@Q}}
+      }
+      \ADD{\YShift}{\Height@QText}{\YShift}
+    }
+  \end{picture}
+  \newpage
+  \begin{picture}(\width@picture,\height@picture)% 2ページ目
+    % 職歴情報(枠線)
+    \MULTIPLY{\value{Length@Work}}{\Height@WorkText}{\Height@Work}
+    \ADD{\Height@Work}{\Height@WorkItem}{\Height@Work}
+    \MoveAt(0,0){
+      \PutAt(0,-1){\makebox(\Width@RIREKI,5)[c]{\large \bf 職\hspace{5mm}歴}}
+      \PutFrameAt(0,0)(\Width@RIREKI,\Height@Work)
+      \PutAt(\Width@WorkPeriod,0){\line(0,-1){\Height@Work}}
+      \PutAt(0,\Height@WorkItem){\line(1,0){\Width@RIREKI}}
+    }
+    \def\YShift{\Height@WorkItem}
+    \@for\linebuf:=\list@Work\do{%
+      \ADD{\YShift}{\Height@WorkText}{\YShift}
+      \MoveAt(0,\YShift){
+        \PutAt(0,0){\line(1,0){\Width@RIREKI}}
+      }
+    }
+    % 職歴情報(見出し)
+    \MoveAt(0,0){
+      \PutAt(0,\Height@WorkItem){\makebox(\Width@WorkPeriod,\Height@WorkItem)[c]{\scriptsize 在職期間}}
+      \PutAt(\Width@WorkPeriod,\Height@WorkItem){\makebox(\Width@WorkDesc,\Height@WorkItem)[c]{\scriptsize 勤務先・職種等}}
+    }
+    % 職歴情報(内容)
+    \def\YShift{\Height@WorkItem}
+    \@for\linebuf:=\list@Work\do{%
+      \expandafter\split@Work\linebuf
+      \MoveAt(0,\YShift){
+        % 在職期間
+        \SUBTRACT{\Width@WorkPeriod}{\Offset@Work}{\Width@WorkPeriodText}
+        \SUBTRACT{\Width@WorkPeriodText}{\Offset@Work}{\Width@WorkPeriodText}
+        \PutAt(0,\Height@WorkText){\makebox(\Width@WorkPeriod,\Height@WorkText)[c]{\parbox[c]{\Width@WorkPeriodText mm}{\Start@Work\\\hfill$\sim$\End@Work}}}
+        % 勤務先・職種等
+        \SUBTRACT{\Width@WorkDesc}{\Offset@Work}{\Width@WorkDescText}
+        \SUBTRACT{\Width@WorkDescText}{\Offset@Edu}{\Width@WorkDescText}
+        \ADD{\Width@WorkPeriod}{\Offset@Edu}{\X@Box}
+        \PutAt(\X@Box,\Height@WorkText){\makebox(\Width@WorkDescText,\Height@WorkText)[l]{\parbox[c]{
+          \Width@WorkDescText mm}{\Company@Work\\\Post@Work}
+        }}
+      }
+      \ADD{\YShift}{\Height@WorkText}{\YShift}
+    }
+    % 休職情報(枠線)
+    \ADD{\Height@Work}{10}{\Y@Box}
+    \MULTIPLY{\value{Length@Leave}}{\Height@LeaveText}{\Height@Leave}
+    \ADD{\Height@Leave}{\Height@LeaveItem}{\Height@Leave}
+    \MoveAt(0,\Y@Box){
+      \PutAt(0,-1){\makebox(\Width@RIREKI,5)[c]{\large \bf 休\hspace{5mm}業\hspace{5mm}・\hspace{5mm}休\hspace{5mm}職\hspace{5mm}歴}}
+      \PutFrameAt(0,0)(\Width@RIREKI,\Height@Leave)
+      \PutAt(\Width@LeavePeriod,0){\line(0,-1){\Height@Leave}}
+      \PutAt(0,\Height@LeaveItem){\line(1,0){\Width@RIREKI}}
+    }
+    \def\YShift{\Height@LeaveItem}
+    \@for\linebuf:=\list@Leave\do{%
+      \ADD{\YShift}{\Height@LeaveText}{\YShift}
+      \MoveAt(0,\YShift){
+        \PutAt(0,0){\line(1,0){\Width@RIREKI}}
+      }
+    }
+    % 休歴情報(見出し)
+    \MoveAt(0,\Y@Box){
+      \PutAt(0,\Height@LeaveItem){\makebox(\Width@LeavePeriod,\Height@LeaveItem)[c]{\scriptsize 休職期間}}
+      \PutAt(\Width@LeavePeriod,\Height@LeaveItem){\makebox(\Width@LeaveDesc,\Height@LeaveItem)[c]{\scriptsize 休業・休職内容等}}
+    }
+    % 休職情報(内容)
+    \ADD{\Y@Box}{\Height@LeaveItem}{\YShift}
+    \@for\linebuf:=\list@Leave\do{%
+      \expandafter\split@Leave\linebuf
+      \MoveAt(0,\YShift){
+        % 休職期間
+        \SUBTRACT{\Width@LeavePeriod}{\Offset@Leave}{\Width@LeavePeriodText}
+        \SUBTRACT{\Width@LeavePeriodText}{\Offset@Leave}{\Width@LeavePeriodText}
+        \PutAt(0,\Height@LeaveText){\makebox(\Width@LeavePeriod,\Height@LeaveText)[c]{\parbox[c]{\Width@LeavePeriodText mm}{\Start@Leave\\\hfill$\sim$\End@Leave}}}
+        % 休業・休職内容等
+        \SUBTRACT{\Width@LeaveDesc}{\Offset@Leave}{\Width@LeaveDescText}
+        \SUBTRACT{\Width@LeaveDescText}{\Offset@Edu}{\Width@LeaveDescText}
+        \ADD{\Width@LeavePeriod}{\Offset@Edu}{\X@Box}
+        \PutAt(\X@Box,\Height@LeaveText){\makebox(\Width@LeaveDescText,\Height@LeaveText)[l]{\parbox[c]{
+              \Width@LeaveDescText mm}{\Desc@Leave}
+        }}
+      }
+      \ADD{\YShift}{\Height@LeaveText}{\YShift}
+    }
+  \end{picture}
+}
+
+%----------------------------------------------------------------------------
+%
+% ドキュメント書き出しコマンドを\end{document}のタイミングで呼び出す
+%
+%----------------------------------------------------------------------------
+\let\enddocumentorg=\enddocument
+\def\enddocument{
+  \writepages
+  \enddocumentorg
+}
