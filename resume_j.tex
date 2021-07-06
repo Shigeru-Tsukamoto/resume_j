@@ -12,7 +12,7 @@
 % バグレポート、修正の要望等は、tsukamoto.shigeru@gmail.com までお願いします。
 %
 %---+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8----+----9----+----0
-\documentclass[a4paper,12pt,oneside]{jarticle}
+\documentclass[a4paper,12pt,twoside]{jarticle}
 
 % 必須パッケージ
 \usepackage[dvipdfmx]{graphicx}% 画像ファイル処理
@@ -70,6 +70,20 @@
 % 休職情報(休職開始年月日、休職終了年月日、休職内容)
 %
 \Leave{2009年9月9日}{2009年10月20日}{病気休職(入院・加療)}
+
+%
+% 志望動機・特記事項
+%
+%\Motivation{}
+\Motivation{
+この欄に志望動機・特記事項等を記入する。\LaTeX コマンドを使っても以下のように改行も含めた文章を書くことができる。\\
+箇条書きも
+\begin{itemize}
+  \item 箇条書き1
+  \item 箇条書き2
+\end{itemize}
+のように書くことができる。
+}
 
 \end{document}
 %--
